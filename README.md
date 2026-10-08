@@ -4,19 +4,20 @@
 
 ## 脚本
 
-### MWI 挂牌成交提醒 + 房屋/神龛升级成本
+### MWI 挂牌成交提醒与升级成本
 
 自己的市场卖单或收购单成交时在页面提示，并显示房屋和神龛升级材料成本。
 
-- 当前版本：1.1.11
+- 当前版本：1.1.12
 - [安装脚本](https://raw.githubusercontent.com/TechLinF/mwi-userscripts/main/release/mwi-listing-notifier.user.js)
 - 数据说明：监听游戏 WebSocket 消息，读取游戏数据和公开市场快照；设置及市场缓存仅保存在浏览器本地，不上传账号数据。
+- 致谢：升级成本相关功能基于柆雨的 [Milky Way Idle Guild Assistant](https://github.com/LaYuDr/milky-way-idle-guild-credit-optimizer) 修改，依照 MIT 许可证使用。
 
 ### MWI 角色上次在线
 
 在游戏界面列出账号全部角色、距离上次在线的时间和离线收益进度。
 
-- 当前版本：1.2.0
+- 当前版本：1.2.1
 - [安装脚本](https://raw.githubusercontent.com/TechLinF/mwi-userscripts/main/release/mwi-character-last-online.user.js)
 - 数据说明：使用当前登录状态向游戏官方 API 请求角色列表；离线收益上限设置仅保存在浏览器本地，不上传给作者。
 

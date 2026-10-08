@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         MWI 角色上次在线
-// @namespace    https://milkywayidle.com/
-// @version      1.2.0
+// @namespace    https://github.com/TechLinF/mwi-userscripts
+// @version      1.2.1
 // @description  在游戏界面列出账号全部角色及距离上次在线的时间。
 // @author       ColaCola Stella
 // @license      MIT

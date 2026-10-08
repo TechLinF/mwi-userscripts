@@ -1,11 +1,12 @@
 // ==UserScript==
-// @name         MWI 挂牌成交提醒 + 房屋/神龛升级成本
-// @name:en      MWI 挂牌成交提醒 + 房屋/神龛升级成本
-// @namespace    https://milkywayidle.com/
-// @version      1.1.11
+// @name         MWI 挂牌成交提醒与升级成本
+// @name:en      MWI Listing Fill Alerts & Upgrade Costs
+// @namespace    https://github.com/TechLinF/mwi-userscripts
+// @version      1.1.12
 // @description  自己的市场卖单或收购单成交时在页面提示，并显示房屋和神龛升级材料成本。
 // @description:en  Shows listing fills and estimated material costs for house and shrine upgrades.
 // @author       ColaCola Stella
+// @contributor  柆雨
 // @license      MIT
 // @homepageURL  https://github.com/TechLinF/mwi-userscripts
 // @supportURL   https://github.com/TechLinF/mwi-userscripts/issues
@@ -22,10 +23,33 @@
 // @noframes
 // ==/UserScript==
 
+/*
+ * Upgrade-cost portions are adapted from Milky Way Idle Guild Assistant:
+ * https://github.com/LaYuDr/milky-way-idle-guild-credit-optimizer
+ *
+ * MIT License
+ * Copyright (c) 2026 柆雨
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 (function () {
     "use strict";
 
-    const VERSION = "1.1.11";
+    const VERSION = "1.1.12";
     const PAGE_WINDOW = typeof unsafeWindow === "object" ? unsafeWindow : window;
     const GAME_WS_HOSTS = new Set([
         "api.milkywayidle.com",
