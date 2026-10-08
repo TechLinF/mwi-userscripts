@@ -139,6 +139,8 @@
         "/items/gold_guild_credit": "金色公会信用点"
     };
     const CREDIT_HRIDS = new Set(Object.keys(ITEM_NAMES).filter(item => item.endsWith("_guild_credit")));
+    // These token exchange rates and purchase-route overrides are intentionally fixed.
+    // Update them if the game changes its guild exchange rules.
     const GUILD_TOKEN_CREDIT_CONVERSIONS = [
         { creditItemHrid: "/items/green_guild_credit", guildTokenCount: 1, creditCount: 10 },
         { creditItemHrid: "/items/brown_guild_credit", guildTokenCount: 1, creditCount: 10 },
