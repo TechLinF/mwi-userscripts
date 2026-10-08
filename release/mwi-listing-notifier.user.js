@@ -2,7 +2,7 @@
 // @name         MWI 挂牌成交提醒与升级成本
 // @name:en      MWI Listing Fill Alerts & Upgrade Costs
 // @namespace    https://github.com/TechLinF/mwi-userscripts
-// @version      1.1.12
+// @version      1.1.13
 // @description  自己的市场卖单或收购单成交时在页面提示，并显示房屋和神龛升级材料成本。
 // @description:en  Shows listing fills and estimated material costs for house and shrine upgrades.
 // @author       ColaCola Stella
@@ -49,7 +49,7 @@
 (function () {
     "use strict";
 
-    const VERSION = "1.1.12";
+    const VERSION = "1.1.13";
     const PAGE_WINDOW = typeof unsafeWindow === "object" ? unsafeWindow : window;
     const GAME_WS_HOSTS = new Set([
         "api.milkywayidle.com",
@@ -139,18 +139,6 @@
         "/items/gold_guild_credit": "金色公会信用点"
     };
     const CREDIT_HRIDS = new Set(Object.keys(ITEM_NAMES).filter(item => item.endsWith("_guild_credit")));
-    // These token exchange rates and purchase-route overrides are intentionally fixed.
-    // Update them if the game changes its guild exchange rules.
-    const GUILD_TOKEN_CREDIT_CONVERSIONS = [
-        { creditItemHrid: "/items/green_guild_credit", guildTokenCount: 1, creditCount: 10 },
-        { creditItemHrid: "/items/brown_guild_credit", guildTokenCount: 1, creditCount: 10 },
-        { creditItemHrid: "/items/white_guild_credit", guildTokenCount: 1, creditCount: 10 },
-        { creditItemHrid: "/items/blue_guild_credit", guildTokenCount: 1, creditCount: 10 },
-        { creditItemHrid: "/items/purple_guild_credit", guildTokenCount: 1, creditCount: 1 },
-        { creditItemHrid: "/items/red_guild_credit", guildTokenCount: 1, creditCount: 1 },
-        { creditItemHrid: "/items/silver_guild_credit", guildTokenCount: 10, creditCount: 1 },
-        { creditItemHrid: "/items/gold_guild_credit", guildTokenCount: 60, creditCount: 1 }
-    ];
     const NATIVE_CREDIT_PURCHASE_ITEM_OVERRIDES = {
         "/items/purple_guild_credit": "/items/red_culinary_hat"
     };
@@ -371,6 +359,21 @@
             return source.map((detail, index) => [detail?.itemHrid || detail?.hrid || String(index), detail]);
         }
         return Object.entries(source || {});
+    }
+
+    function guildTokenCreditConversions() {
+        const detail = itemDetailEntries().find(([key, value]) =>
+            key === "/items/guild_token" || value?.itemHrid === "/items/guild_token" || value?.hrid === "/items/guild_token"
+        )?.[1];
+        return (Array.isArray(detail?.guildCreditConversions) ? detail.guildCreditConversions : [])
+            .map(conversion => ({
+                creditItemHrid: conversion?.creditItemHrid,
+                guildTokenCount: Number(conversion?.itemCount),
+                creditCount: Number(conversion?.creditCount)
+            }))
+            .filter(rule => CREDIT_HRIDS.has(rule.creditItemHrid)
+                && Number.isSafeInteger(rule.guildTokenCount) && rule.guildTokenCount > 0
+                && Number.isSafeInteger(rule.creditCount) && rule.creditCount > 0);
     }
 
     function itemName(itemHrid, fallback) {
@@ -1857,7 +1860,7 @@
 
     function nativeBestCreditUnitCosts() {
         const tokenCreditTargets = Object.fromEntries(
-            GUILD_TOKEN_CREDIT_CONVERSIONS.map(rule => [rule.creditItemHrid, rule.creditCount])
+            guildTokenCreditConversions().map(rule => [rule.creditItemHrid, rule.creditCount])
         );
         return Object.fromEntries(
             Object.entries(nativeBestCreditConversions(tokenCreditTargets)).map(([creditItemHrid, best]) => [
@@ -2009,7 +2012,7 @@
 
     function nativeGuildTokenCreditExchange(row, quantityField) {
         if (!row || !NATIVE_CREDIT_GUILD_TOKEN_OVERRIDES.has(row.itemHrid)) return null;
-        const rule = GUILD_TOKEN_CREDIT_CONVERSIONS.find(candidate => candidate.creditItemHrid === row.itemHrid);
+        const rule = guildTokenCreditConversions().find(candidate => candidate.creditItemHrid === row.itemHrid);
         if (!rule) return null;
         const quantity = quantityField === "required" ? row.required : row.remainingMissing ?? row.missing;
         const credits = Math.max(0, Math.floor(Number(quantity) || 0));
@@ -2089,7 +2092,7 @@
 
         for (const row of rows) {
             if (!row?.itemHrid || !CREDIT_HRIDS.has(row.itemHrid)) continue;
-            const rule = GUILD_TOKEN_CREDIT_CONVERSIONS.find(candidate => candidate.creditItemHrid === row.itemHrid);
+            const rule = guildTokenCreditConversions().find(candidate => candidate.creditItemHrid === row.itemHrid);
             if (!rule) continue;
 
             const requiredCredits = Math.max(0, Math.floor(Number(row.required) || 0));
